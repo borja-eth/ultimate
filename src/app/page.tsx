@@ -166,130 +166,128 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="h-full">
+    <div className="flex h-screen bg-gray-900">
       <Sidebar />
-      <div className="md:pl-64 flex flex-col flex-1">
-        <main className="flex-1 pb-8">
-          <div className="mt-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              
-              {/* Stats Overview */}
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {/* Current Price Card */}
-                <div className="bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="rounded-md bg-green-500 p-3">
-                          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-400 truncate">
-                            BTC Price
-                          </dt>
-                          <dd className="flex items-baseline">
-                            <div className="text-2xl font-semibold text-white">
-                              ${currentPrice.toLocaleString()}
-                            </div>
-                          </dd>
-                        </dl>
+      <main className="flex-1 p-8">
+        <div className="mt-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {/* Current Price Card */}
+              <div className="bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="rounded-md bg-green-500 p-3">
+                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
                       </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* Total P&L USD Card */}
-                <div className="bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className={`rounded-md ${totalPnL.usd >= 0 ? 'bg-green-500' : 'bg-red-500'} p-3`}>
-                          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-400 truncate">
-                            Total P&L (USD)
-                          </dt>
-                          <dd className="flex items-baseline">
-                            <div className={`text-2xl font-semibold ${totalPnL.usd >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                              ${totalPnL.usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Total P&L BTC Card */}
-                <div className="bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className={`rounded-md ${totalPnL.btc >= 0 ? 'bg-green-500' : 'bg-red-500'} p-3`}>
-                          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v-2m0 2v2m0 8v-2m0 2v-2m0-6h.01M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-400 truncate">
-                            Total P&L (BTC)
-                          </dt>
-                          <dd className="flex items-baseline">
-                            <div className={`text-2xl font-semibold ${totalPnL.btc >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                              ₿{totalPnL.btc.toFixed(8)}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-400 truncate">
+                          BTC Price
+                        </dt>
+                        <dd className="flex items-baseline">
+                          <div className="text-2xl font-semibold text-white">
+                            ${currentPrice.toLocaleString()}
+                          </div>
+                        </dd>
+                      </dl>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8">
-                <div className="bg-gray-800 shadow sm:rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <h3 className="text-lg leading-6 font-medium text-white">
-                      New Trade
-                    </h3>
-                    <div className="mt-5">
-                      <TradeForm onSubmit={handleNewTrade} />
+              {/* Total P&L USD Card */}
+              <div className="bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className={`rounded-md ${totalPnL.usd >= 0 ? 'bg-green-500' : 'bg-red-500'} p-3`}>
+                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-400 truncate">
+                          Total P&L (USD)
+                        </dt>
+                        <dd className="flex items-baseline">
+                          <div className={`text-2xl font-semibold ${totalPnL.usd >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            ${totalPnL.usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </div>
+                        </dd>
+                      </dl>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8">
-                <div className="bg-gray-800 shadow sm:rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <h3 className="text-lg leading-6 font-medium text-white mb-4">
-                      Active Trades
-                    </h3>
-                    <TradesTable
-                      trades={trades}
-                      currentPrice={currentPrice}
-                      onCloseTrade={handleCloseTrade}
-                      onDeleteTrade={handleDeleteTrade}
-                      onEditTrade={handleEditTrade}
-                    />
+              {/* Total P&L BTC Card */}
+              <div className="bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className={`rounded-md ${totalPnL.btc >= 0 ? 'bg-green-500' : 'bg-red-500'} p-3`}>
+                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v-2m0 2v2m0 8v-2m0 2v-2m0-6h.01M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-400 truncate">
+                          Total P&L (BTC)
+                        </dt>
+                        <dd className="flex items-baseline">
+                          <div className={`text-2xl font-semibold ${totalPnL.btc >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            ₿{totalPnL.btc.toFixed(8)}
+                          </div>
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            <div className="mt-8">
+              <div className="bg-gray-800 shadow sm:rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-medium text-white">
+                    New Trade
+                  </h3>
+                  <div className="mt-5">
+                    <TradeForm onSubmit={handleNewTrade} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <div className="bg-gray-800 shadow sm:rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-medium text-white mb-4">
+                    Active Trades
+                  </h3>
+                  <TradesTable
+                    trades={trades}
+                    currentPrice={currentPrice}
+                    onCloseTrade={handleCloseTrade}
+                    onDeleteTrade={handleDeleteTrade}
+                    onEditTrade={handleEditTrade}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
       <CloseTradeModal
         isOpen={isCloseModalOpen}
         trade={selectedTrade}
