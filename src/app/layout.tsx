@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full bg-gray-900">
-      <body className={`${inter.className} h-full`}>
+      <body>
         {children}
         <Toaster position="top-right" />
       </body>
