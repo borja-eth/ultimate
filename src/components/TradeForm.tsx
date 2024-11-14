@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { TradeType } from '@/types/trade';
+import toast from 'react-hot-toast';
 
 interface TradeFormInputs {
   type: TradeType;
@@ -15,11 +16,32 @@ export default function TradeForm({ onSubmit }: TradeFormProps) {
   const { register, handleSubmit, reset, watch } = useForm<TradeFormInputs>();
   const tradeType = watch('type');
 
+  const handleSubmit = async (data: TradeFormInputs) => {
+    try {
+      console.log('Form data:', data); // Log de los datos del formulario
+      
+      // Validar los datos antes de enviar
+      if (!data.type || !data.amount || !data.price) {
+        toast.error('Please fill all fields');
+        return;
+      }
+
+      // Validar que los números sean positivos
+      if (data.amount <= 0 || data.price <= 0) {
+        toast.error('Amount and price must be positive numbers');
+        return;
+      }
+
+      await onSubmit(data);
+      reset(); // Limpiar el formulario solo si fue exitoso
+    } catch (error) {
+      console.error('Error submitting trade:', error);
+      toast.error('Failed to submit trade');
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit((data) => {
-      onSubmit(data);
-      reset();
-    })} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="bg-gray-900 rounded-xl p-6 shadow-lg">
         <div className="grid grid-cols-1 gap-6">
           {/* Trade Type Selector */}

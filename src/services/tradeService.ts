@@ -1,6 +1,19 @@
 import { supabase } from '@/lib/supabase';
-import { Trade } from '@/types/trade';
+import { Trade, TradeType, TradeStatus } from '@/types/trade';
 import toast from 'react-hot-toast';
+
+interface DBTrade {
+  id: string;
+  type: TradeType;
+  open_amount: number;
+  open_price: number;
+  open_date: string;
+  remaining_amount: number;
+  close_amount?: number;
+  close_price?: number;
+  close_date?: string;
+  status: TradeStatus;
+}
 
 export const tradeService = {
   async getAllTrades(): Promise<Trade[]> {
@@ -26,28 +39,65 @@ export const tradeService = {
 
   async createTrade(trade: Omit<Trade, 'id'>): Promise<Trade> {
     try {
+      // Log de los datos recibidos
+      console.log('Received trade data:', trade);
+
+      // Preparar los datos para Supabase
+      const tradeData = {
+        type: trade.type,
+        open_amount: trade.openAmount,
+        open_price: trade.openPrice,
+        open_date: new Date().toISOString(),
+        remaining_amount: trade.remainingAmount,
+        status: trade.status
+      };
+
+      // Log de los datos formateados
+      console.log('Formatted trade data for Supabase:', tradeData);
+
+      // Intentar insertar en Supabase
       const { data, error } = await supabase
         .from('trades')
-        .insert([{
-          type: trade.type,
-          open_amount: trade.openAmount,
-          open_price: trade.openPrice,
-          remaining_amount: trade.remainingAmount,
-          status: trade.status
-        }])
-        .select()
+        .insert([tradeData])
+        .select('*')
         .single();
 
+      // Si hay error, loguearlo detalladamente
       if (error) {
-        console.error('Error creating trade:', error);
-        toast.error('Error creating trade');
+        console.error('Supabase insertion error:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        toast.error(`Database error: ${error.message}`);
         throw error;
       }
 
+      // Si no hay datos, lanzar error
+      if (!data) {
+        console.error('No data returned from Supabase');
+        toast.error('No data returned from database');
+        throw new Error('No data returned from database');
+      }
+
+      // Log de los datos recibidos de Supabase
+      console.log('Received data from Supabase:', data);
+
+      // Mapear y retornar los datos
+      const mappedTrade = this.mapTradeFromDB(data);
+      console.log('Mapped trade:', mappedTrade);
+      
       toast.success('Trade created successfully');
-      return this.mapTradeFromDB(data);
+      return mappedTrade;
     } catch (error) {
-      console.error('Error in createTrade:', error);
+      // Log detallado del error
+      console.error('Detailed error in createTrade:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorStack: error instanceof Error ? error.stack : undefined
+      });
+      
       toast.error('Failed to create trade');
       throw error;
     }
@@ -104,18 +154,26 @@ export const tradeService = {
     }
   },
 
-  mapTradeFromDB(dbTrade: any): Trade {
-    return {
-      id: dbTrade.id,
-      type: dbTrade.type,
-      openAmount: Number(dbTrade.open_amount),
-      openPrice: Number(dbTrade.open_price),
-      openDate: new Date(dbTrade.open_date),
-      remainingAmount: Number(dbTrade.remaining_amount),
-      closeAmount: dbTrade.close_amount ? Number(dbTrade.close_amount) : undefined,
-      closePrice: dbTrade.close_price ? Number(dbTrade.close_price) : undefined,
-      closeDate: dbTrade.close_date ? new Date(dbTrade.close_date) : undefined,
-      status: dbTrade.status
-    };
+  mapTradeFromDB(dbTrade: DBTrade): Trade {
+    try {
+      return {
+        id: dbTrade.id,
+        type: dbTrade.type,
+        openAmount: Number(dbTrade.open_amount),
+        openPrice: Number(dbTrade.open_price),
+        openDate: new Date(dbTrade.open_date),
+        remainingAmount: Number(dbTrade.remaining_amount),
+        closeAmount: dbTrade.close_amount ? Number(dbTrade.close_amount) : undefined,
+        closePrice: dbTrade.close_price ? Number(dbTrade.close_price) : undefined,
+        closeDate: dbTrade.close_date ? new Date(dbTrade.close_date) : undefined,
+        status: dbTrade.status
+      };
+    } catch (error) {
+      console.error('Error mapping trade from DB:', {
+        error,
+        dbTrade
+      });
+      throw error;
+    }
   }
 }; 
