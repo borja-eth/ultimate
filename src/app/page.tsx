@@ -3,10 +3,16 @@ import { useState, useEffect } from 'react';
 import TradeForm from '@/components/TradeForm';
 import TradesTable from '@/components/TradesTable';
 import Sidebar from '@/components/Sidebar';
-import { Trade, PnL, TradeType } from '@/types/trade';
-import { getCurrentBitcoinPrice } from '@/services/bitcoin';
 import CloseTradeModal from '@/components/CloseTradeModal';
 import EditTradeModal from '@/components/EditTradeModal';
+import { Trade } from '@/types/trade';
+import { getCurrentBitcoinPrice } from '@/services/bitcoin';
+
+interface NewTradeData {
+  type: 'BUY' | 'SELL';
+  amount: number;
+  price: number;
+}
 
 export default function Dashboard() {
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -61,7 +67,7 @@ export default function Dashboard() {
     calculateTotalPnL();
   }, [trades, currentPrice]);
 
-  const handleNewTrade = (data: any) => {
+  const handleNewTrade = (data: NewTradeData) => {
     const newTrade: Trade = {
       id: Date.now().toString(),
       type: data.type,

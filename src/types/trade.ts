@@ -19,4 +19,10 @@ export interface PnL {
   realizedBTC: number;
   unrealizedUSD: number;
   unrealizedBTC: number;
+}
+
+export interface TradeFormData {
+  type: TradeType;
+  amount: number;
+  price: number;
 } 
