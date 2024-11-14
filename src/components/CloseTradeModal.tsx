@@ -138,4 +138,4 @@ export default function CloseTradeModal({ isOpen, trade, currentPrice, onClose, 
       </Dialog>
     </Transition>
   );
-} 
+}

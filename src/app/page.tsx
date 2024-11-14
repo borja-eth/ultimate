@@ -7,6 +7,8 @@ import CloseTradeModal from '@/components/CloseTradeModal';
 import EditTradeModal from '@/components/EditTradeModal';
 import { Trade } from '@/types/trade';
 import { getCurrentBitcoinPrice } from '@/services/bitcoin';
+import { tradeService } from '@/services/tradeService';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface NewTradeData {
   type: 'BUY' | 'SELL';
@@ -21,6 +23,7 @@ export default function Dashboard() {
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [totalPnL, setTotalPnL] = useState({ usd: 0, btc: 0 });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -67,52 +70,78 @@ export default function Dashboard() {
     calculateTotalPnL();
   }, [trades, currentPrice]);
 
-  const handleNewTrade = (data: NewTradeData) => {
-    const newTrade: Trade = {
-      id: Date.now().toString(),
-      type: data.type,
-      openAmount: Number(data.amount),
-      openPrice: Number(data.price),
-      openDate: new Date(),
-      remainingAmount: Number(data.amount),
-      status: 'OPEN'
+  useEffect(() => {
+    const loadTrades = async () => {
+      try {
+        setIsLoading(true);
+        const loadedTrades = await tradeService.getAllTrades();
+        setTrades(loadedTrades);
+      } catch (error) {
+        console.error('Error loading trades:', error);
+        // Aquí podrías mostrar un toast o notificación de error
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setTrades([...trades, newTrade]);
-  };
+    loadTrades();
+  }, []);
 
-  const handleCloseTrade = (tradeId: string) => {
-    const trade = trades.find(t => t.id === tradeId);
-    if (trade) {
-      setSelectedTrade(trade);
-      setIsCloseModalOpen(true);
+  const handleNewTrade = async (data: NewTradeData) => {
+    try {
+      const newTrade = await tradeService.createTrade({
+        type: data.type,
+        openAmount: Number(data.amount),
+        openPrice: Number(data.price),
+        openDate: new Date(),
+        remainingAmount: Number(data.amount),
+        status: 'OPEN'
+      });
+
+      setTrades(prevTrades => [...prevTrades, newTrade]);
+    } catch (error) {
+      console.error('Error creating trade:', error);
     }
   };
 
-  const handleDeleteTrade = (tradeId: string) => {
-    setTrades(trades.filter(trade => trade.id !== tradeId));
+  const handleCloseTrade = async (
+    tradeId: string, 
+    closeAmount: number, 
+    closePrice: number
+  ) => {
+    try {
+      const trade = trades.find(t => t.id === tradeId);
+      if (!trade) return;
+
+      const updatedTrade = await tradeService.updateTrade({
+        ...trade,
+        remainingAmount: trade.remainingAmount - closeAmount,
+        closeAmount,
+        closePrice,
+        closeDate: new Date(),
+        status: trade.remainingAmount - closeAmount <= 0 ? 'CLOSED' : 'OPEN'
+      });
+
+      setTrades(prevTrades => 
+        prevTrades.map(t => t.id === tradeId ? updatedTrade : t)
+      );
+    } catch (error) {
+      console.error('Error closing trade:', error);
+    }
+  };
+
+  const handleDeleteTrade = async (tradeId: string) => {
+    try {
+      await tradeService.deleteTrade(tradeId);
+      setTrades(prevTrades => prevTrades.filter(t => t.id !== tradeId));
+    } catch (error) {
+      console.error('Error deleting trade:', error);
+    }
   };
 
   const handleEditTrade = (trade: Trade) => {
     setSelectedTrade(trade);
     setIsEditModalOpen(true);
-  };
-
-  const handleCloseTradeSubmit = (tradeId: string, closeAmount: number, closePrice: number) => {
-    setTrades(trades.map(trade => {
-      if (trade.id === tradeId) {
-        const newRemainingAmount = trade.remainingAmount - closeAmount;
-        return {
-          ...trade,
-          remainingAmount: newRemainingAmount,
-          closeAmount: closeAmount,
-          closePrice: closePrice,
-          closeDate: new Date(),
-          status: newRemainingAmount <= 0 ? 'CLOSED' : 'OPEN'
-        };
-      }
-      return trade;
-    }));
   };
 
   const handleEditTradeSubmit = (tradeId: string, openAmount: number, openPrice: number) => {
@@ -128,6 +157,10 @@ export default function Dashboard() {
       return trade;
     }));
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="h-full">
@@ -262,7 +295,7 @@ export default function Dashboard() {
           setIsCloseModalOpen(false);
           setSelectedTrade(null);
         }}
-        onSubmit={handleCloseTradeSubmit}
+        onSubmit={handleCloseTrade}
       />
 
       <EditTradeModal

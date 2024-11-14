@@ -3,7 +3,7 @@ import { Trade, PnL } from '@/types/trade';
 interface TradesTableProps {
   trades: Trade[];
   currentPrice: number;
-  onCloseTrade: (tradeId: string) => void;
+  onCloseTrade: (tradeId: string, closeAmount: number, closePrice: number) => void;
   onDeleteTrade: (tradeId: string) => void;
   onEditTrade: (trade: Trade) => void;
 }
@@ -133,7 +133,7 @@ export default function TradesTable({
                   </button>
                   {trade.status === 'OPEN' && (
                     <button
-                      onClick={() => onCloseTrade(trade.id)}
+                      onClick={() => onCloseTrade(trade.id, trade.remainingAmount, currentPrice)}
                       className="text-green-400 hover:text-green-300 mr-2"
                     >
                       Close
