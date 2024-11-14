@@ -9,8 +9,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full bg-gray-900">
       <body className="h-full">
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+          }} 
+        />
         {children}
-        <Toaster position="top-right" />
       </body>
     </html>
   );

@@ -31,7 +31,15 @@ export default function Login() {
 
       if (data?.user) {
         toast.success('Login successful');
-        router.replace('/');
+        
+        // Forzar la redirección usando window.location
+        window.location.href = '/';
+        
+        // Como respaldo, también intentamos con el router
+        setTimeout(() => {
+          router.push('/');
+          router.refresh();
+        }, 100);
       }
     } catch (error) {
       console.error('Login error:', error);

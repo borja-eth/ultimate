@@ -6,26 +6,27 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   const supabase = createMiddlewareClient({ req, res });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  // Si no hay sesión y no estamos en la página de login
-  if (!session && req.nextUrl.pathname !== '/login') {
-    console.log('No session found, redirecting to login');
-    return NextResponse.redirect(new URL('/login', req.url));
+    // Si no hay sesión y no estamos en login, redirigir a login
+    if (!session && !req.nextUrl.pathname.startsWith('/login')) {
+      const redirectUrl = new URL('/login', req.url);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    return res;
+  } catch (error) {
+    console.error('Middleware error:', error);
+    return res; // Permitir que la solicitud continúe en caso de error
   }
-
-  // Si hay sesión y estamos en login
-  if (session && req.nextUrl.pathname === '/login') {
-    console.log('Session found, redirecting to dashboard');
-    return NextResponse.redirect(new URL('/', req.url));
-  }
-
-  return res;
 }
 
-// Especificar las rutas que el middleware debe manejar
+// Actualizar el matcher para ser más específico
 export const config = {
-  matcher: ['/', '/login'],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|login).*)',
+  ],
 }; 

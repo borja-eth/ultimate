@@ -9,13 +9,14 @@ import { Trade } from '@/types/trade';
 import { getCurrentBitcoinPrice } from '@/services/bitcoin';
 import { tradeService } from '@/services/tradeService';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 interface NewTradeData {
   type: 'BUY' | 'SELL';
   amount: number;
   price: number;
 }
-
 export default function Dashboard() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
@@ -23,7 +24,9 @@ export default function Dashboard() {
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [totalPnL, setTotalPnL] = useState({ usd: 0, btc: 0 });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
 
   useEffect(() => {
     const fetchPrice = async () => {
