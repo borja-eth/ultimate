@@ -10,23 +10,22 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // Si no hay sesión y no estamos en la página de login, redirigir a login
+  // Si no hay sesión y no estamos en la página de login
   if (!session && req.nextUrl.pathname !== '/login') {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/login';
-    return NextResponse.redirect(redirectUrl);
+    console.log('No session found, redirecting to login');
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // Si hay sesión y estamos en login, redirigir al dashboard
+  // Si hay sesión y estamos en login
   if (session && req.nextUrl.pathname === '/login') {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/';
-    return NextResponse.redirect(redirectUrl);
+    console.log('Session found, redirecting to dashboard');
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return res;
 }
 
+// Especificar las rutas que el middleware debe manejar
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/', '/login'],
 }; 

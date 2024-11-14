@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TradeForm from '@/components/TradeForm';
 import TradesTable from '@/components/TradesTable';
 import Sidebar from '@/components/Sidebar';
