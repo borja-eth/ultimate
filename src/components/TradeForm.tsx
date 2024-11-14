@@ -16,9 +16,9 @@ export default function TradeForm({ onSubmit }: TradeFormProps) {
   const { register, handleSubmit, reset, watch } = useForm<TradeFormInputs>();
   const tradeType = watch('type');
 
-  const handleSubmit = async (data: TradeFormInputs) => {
+  const onSubmitForm = handleSubmit(async (data: TradeFormInputs) => {
     try {
-      console.log('Form data:', data); // Log de los datos del formulario
+      console.log('Form data:', data);
       
       // Validar los datos antes de enviar
       if (!data.type || !data.amount || !data.price) {
@@ -38,10 +38,10 @@ export default function TradeForm({ onSubmit }: TradeFormProps) {
       console.error('Error submitting trade:', error);
       toast.error('Failed to submit trade');
     }
-  };
+  });
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={onSubmitForm} className="space-y-6">
       <div className="bg-gray-900 rounded-xl p-6 shadow-lg">
         <div className="grid grid-cols-1 gap-6">
           {/* Trade Type Selector */}
